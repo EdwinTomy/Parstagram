@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.parstagram.fragments.ComposeFragment;
+import com.example.parstagram.fragments.LogoutFragment;
 import com.example.parstagram.fragments.PostsFragment;
 import com.example.parstagram.fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
@@ -60,6 +61,9 @@ public class MainActivity extends AppCompatActivity{
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 Fragment fragment;
                 switch (menuItem.getItemId()) {
+                    case R.id.action_logout:
+                        fragment = new LogoutFragment();
+                        break;
                     case R.id.action_home:
                         fragment = new PostsFragment();
                         break;
