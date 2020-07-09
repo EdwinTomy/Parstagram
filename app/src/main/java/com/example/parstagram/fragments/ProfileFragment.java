@@ -3,6 +3,8 @@ package com.example.parstagram.fragments;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.example.parstagram.Post;
 import com.example.parstagram.PostsAdapter;
 import com.parse.FindCallback;
@@ -37,8 +39,10 @@ public class ProfileFragment extends PostsFragment {
                 for(Post post : posts){
                     Log.i(TAG, "Post: " + post.getDescription() + ", user: " + post.getUser().getUsername());
                 }
+                allPosts.clear();
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
+                swipeContainer.setRefreshing(false);
             }
         });
     }
