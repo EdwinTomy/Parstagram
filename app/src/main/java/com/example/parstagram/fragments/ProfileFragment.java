@@ -26,7 +26,7 @@ public class ProfileFragment extends PostsFragment {
         query.include(Post.KEY_USER);
         query.whereEqualTo(Post.KEY_USER, ParseUser.getCurrentUser());
         query.setLimit(20);
-        query.addDescendingOrder(Post.KEY_CREATED);
+        query.addDescendingOrder(Post.KEY_CREATED_AT);
         //Object id of Post
         query.findInBackground(new FindCallback<Post>() {
             @Override

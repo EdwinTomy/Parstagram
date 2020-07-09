@@ -1,6 +1,7 @@
 package com.example.parstagram;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.parse.ParseFile;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
+    public static final String TAG = "PostsAdapter";
     private Context context;
     private List<Post> posts;
 
@@ -45,28 +50,67 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         return posts.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView tvUsername;
         private ImageView ivImage;
+        private TextView tvTime;
         private TextView tvDescription;
 
-        public ViewHolder(@NonNull View itemView){
+        public ViewHolder(@NonNull View itemView) {
             super((itemView));
             tvUsername = itemView.findViewById(R.id.tvUsername);
             ivImage = itemView.findViewById(R.id.ivImage);
             tvDescription = itemView.findViewById(R.id.tvDescription);
+            tvTime = itemView.findViewById(R.id.tvTime);
+            itemView.setOnClickListener(this);
+            visibleChange();
         }
 
         public void bind(Post post) {
             //Bind post data into view elements
-            tvDescription.setText(post.getDescription());
-            tvUsername.setText(post.getUser().getUsername());
-
             ParseFile image = post.getImage();
-            if(image != null) {
+            if (image != null) {
                 Glide.with(context).load(post.getImage().getUrl()).into(ivImage);
             }
+            tvUsername.setText(post.getUser().getUsername());
+
+            tvDescription.setText(post.getDescription());
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            Date date = post.getCreatedAt();
+            tvTime.setText(dateFormat.format(date));
+            //Log.i(TAG, "time is " + post.getCreatedAt());
+
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            //item position
+            int position = getAdapterPosition();
+
+            //Validity of position
+            if(position != RecyclerView.NO_POSITION){
+
+                //Get movie at position
+                Post post = posts.get(position);
+               visibleChange();
+
+            }
+        }
+
+        public void visibleChange(){
+
+            if(tvDescription.getVisibility() == View.VISIBLE){
+                tvDescription.setVisibility(View.GONE);
+                tvTime.setVisibility(View.GONE);
+                Log.i(TAG, "invisble");
+            }else{
+                tvDescription.setVisibility(View.VISIBLE);
+                tvTime.setVisibility(View.VISIBLE);
+                Log.i(TAG, "again visible");
+            }
+
         }
     }
 
