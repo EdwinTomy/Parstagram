@@ -13,8 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.parstagram.LoginActivity;
-import com.example.parstagram.MainActivity;
+import com.example.parstagram.activities.LoginActivity;
 import com.example.parstagram.R;
 import com.parse.ParseUser;
 
@@ -46,7 +45,6 @@ public class LogoutFragment extends Fragment {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "hello", Toast.LENGTH_LONG).show();
                 ParseUser.logOut();
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 //Navigate to LoginActivity

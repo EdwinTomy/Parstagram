@@ -1,6 +1,7 @@
-package com.example.parstagram;
+package com.example.parstagram.adapters;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,19 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.example.parstagram.models.Post;
+import com.example.parstagram.R;
 import com.parse.ParseFile;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
@@ -45,6 +50,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         holder.bind(post);
     }
 
+    //Return total posts count
     @Override
     public int getItemCount() {
         return posts.size();
@@ -71,40 +77,32 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             //Bind post data into view elements
             ParseFile image = post.getImage();
             if (image != null) {
-                Glide.with(context).load(post.getImage().getUrl()).into(ivImage);
+                Glide.with(context).load(post.getImage().getUrl()).transform(new RoundedCorners(30)).into(ivImage);
             }
             tvUsername.setText(post.getUser().getUsername());
-
             tvDescription.setText(post.getDescription());
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            Date date = post.getCreatedAt();
-            tvTime.setText(dateFormat.format(date));
-            //Log.i(TAG, "time is " + post.getCreatedAt());
-
-
+            tvTime.setText(getRelativeTimeAgo(post));
         }
 
+        //When post clicked, details appear
         @Override
         public void onClick(View view) {
             //item position
             int position = getAdapterPosition();
-
             //Validity of position
             if(position != RecyclerView.NO_POSITION){
-
                 //Get movie at position
                 Post post = posts.get(position);
-               visibleChange();
-
+                visibleChange();
             }
         }
 
+        //Changes visibility of description and time stamp
         public void visibleChange(){
-
             if(tvDescription.getVisibility() == View.VISIBLE){
                 tvDescription.setVisibility(View.GONE);
                 tvTime.setVisibility(View.GONE);
-                Log.i(TAG, "invisble");
+                Log.i(TAG, "invisible");
             }else{
                 tvDescription.setVisibility(View.VISIBLE);
                 tvTime.setVisibility(View.VISIBLE);
@@ -124,5 +122,29 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     public void addAll(List<Post> list) {
         posts.addAll(list);
         notifyDataSetChanged();
+    }
+
+    //Formatting time passed
+    public String getRelativeTimeAgo(Post post) {
+
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = post.getCreatedAt();
+        String dateString = dateFormat.format(date);
+
+
+        String twitterFormat = "dd-MM-yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(dateString).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return relativeDate;
     }
 }

@@ -1,12 +1,8 @@
 package com.example.parstagram.fragments;
 
-import android.content.Context;
 import android.util.Log;
 
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.example.parstagram.Post;
-import com.example.parstagram.PostsAdapter;
+import com.example.parstagram.models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -18,6 +14,7 @@ public class ProfileFragment extends PostsFragment {
 
     public static final String TAG = "ProfileFragment";
 
+    //Retrieving ParseObjects (posts) of current user
     @Override
     protected void queryPosts(int postLimit) {
 
@@ -27,7 +24,7 @@ public class ProfileFragment extends PostsFragment {
         query.whereEqualTo(Post.KEY_USER, ParseUser.getCurrentUser());
         query.setLimit(postsLimit);
         query.addDescendingOrder(Post.KEY_CREATED_AT);
-        //Object id of Post
+
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {

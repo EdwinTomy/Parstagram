@@ -14,9 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.parstagram.EndlessRecyclerViewScrollListener;
-import com.example.parstagram.Post;
-import com.example.parstagram.PostsAdapter;
+import com.example.parstagram.utils.EndlessRecyclerViewScrollListener;
+import com.example.parstagram.models.Post;
+import com.example.parstagram.adapters.PostsAdapter;
 import com.example.parstagram.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -41,9 +41,7 @@ public class PostsFragment extends Fragment {
     protected EndlessRecyclerViewScrollListener scrollListener;
     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
-    public PostsFragment() {
-    }
-
+    public PostsFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,14 +58,12 @@ public class PostsFragment extends Fragment {
 
         // Lookup the swipe container view
         swipeContainer = view.findViewById(R.id.swipeContainer);
-        refreshTimeline(swipeContainer);
+        setupPullToRefresh(swipeContainer);
 
         //Create adapter and data source
         allPosts = new ArrayList<>();
         adapter = new PostsAdapter(getContext(), allPosts);
         //Create layout for one row in the list
-
-
         //Set the adapter on the recycler view
         rvPosts.setAdapter(adapter);
         //Set the layout manager on the recycler view
@@ -77,12 +73,9 @@ public class PostsFragment extends Fragment {
 
         //Endless scrolling
         rvPosts.setLayoutManager(linearLayoutManager);
-        // Retain an instance so that you can call `resetState()` for fresh searches
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
                 postsLimit += 10;
                 queryPosts(postsLimit);
             }
@@ -92,8 +85,8 @@ public class PostsFragment extends Fragment {
 
     }
 
-    //Refresh timeline
-    public void refreshTimeline(SwipeRefreshLayout swipeContainer){
+    //Configuring the container
+    public void setupPullToRefresh(SwipeRefreshLayout swipeContainer){
         // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -105,16 +98,13 @@ public class PostsFragment extends Fragment {
             @Override
             public void onRefresh() {
                 Log.i(TAG, "Loading in");
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
                 queryPosts(POST_LIMIT);
                 postsLimit = POST_LIMIT;
             }
         });
     }
 
-    //Retrieving ParseObject
+    //Retrieving ParseObjects (posts)
     protected void queryPosts(int postsLimit) {
 
         //Object to be queried (Post)
@@ -122,7 +112,7 @@ public class PostsFragment extends Fragment {
         query.include(Post.KEY_USER);
         query.setLimit(postsLimit);
         query.addDescendingOrder(Post.KEY_CREATED_AT);
-        //Object id of Post
+
         query.findInBackground(new FindCallback<Post>() {
             @Override
             public void done(List<Post> posts, ParseException e) {

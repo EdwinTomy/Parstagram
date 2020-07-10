@@ -7,29 +7,41 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ComposeFragment">
 
-    <EditText
-        android:id="@+id/etDescription"
+    <ImageView
+        android:id="@+id/ivPostImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Description..." />
+        android:layout_height="200dp"
+        android:layout_marginTop="5dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <Button
         android:id="@+id/btnCaptureImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Take Picture" />
+        android:backgroundTint="#2196F3"
+        android:fontFamily="@font/roboto"
+        android:includeFontPadding="false"
+        android:text="Take Picture"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/ivPostImage"
+    <EditText
+        android:id="@+id/etDescription"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:fontFamily="@font/roboto"
+        android:hint="Description..." />
 
     <Button
         android:id="@+id/btnSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit" />
+        android:text="Submit"
+        android:backgroundTint="#2196F3"
+        android:fontFamily="@font/roboto"
+        android:includeFontPadding="false"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"/>
 
 </LinearLayout>
