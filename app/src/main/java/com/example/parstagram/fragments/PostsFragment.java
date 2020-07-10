@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.parstagram.EndlessRecyclerViewScrollListener;
 import com.example.parstagram.Post;
 import com.example.parstagram.PostsAdapter;
 import com.example.parstagram.R;
@@ -35,6 +36,10 @@ public class PostsFragment extends Fragment {
     protected SwipeRefreshLayout swipeContainer;
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
+    final protected int POST_LIMIT = 20;
+    protected int postsLimit = 20;
+    protected EndlessRecyclerViewScrollListener scrollListener;
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
     public PostsFragment() {
     }
@@ -67,8 +72,23 @@ public class PostsFragment extends Fragment {
         rvPosts.setAdapter(adapter);
         //Set the layout manager on the recycler view
         rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
-        queryPosts();
+        queryPosts(POST_LIMIT);
 
+
+        //Endless scrolling
+        rvPosts.setLayoutManager(linearLayoutManager);
+        // Retain an instance so that you can call `resetState()` for fresh searches
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                postsLimit += 10;
+                queryPosts(postsLimit);
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        rvPosts.addOnScrollListener(scrollListener);
 
     }
 
@@ -88,18 +108,19 @@ public class PostsFragment extends Fragment {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                queryPosts();
+                queryPosts(POST_LIMIT);
+                postsLimit = POST_LIMIT;
             }
         });
     }
 
     //Retrieving ParseObject
-    protected void queryPosts() {
+    protected void queryPosts(int postsLimit) {
 
         //Object to be queried (Post)
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
         query.include(Post.KEY_USER);
-        query.setLimit(20);
+        query.setLimit(postsLimit);
         query.addDescendingOrder(Post.KEY_CREATED_AT);
         //Object id of Post
         query.findInBackground(new FindCallback<Post>() {
