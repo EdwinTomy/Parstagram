@@ -1,7 +1,15 @@
 package com.example.parstagram;
 
+import android.content.Context;
+
+import com.example.parstagram.adapters.PostsAdapter;
+import com.example.parstagram.fragments.PostsFragment;
+
 import org.junit.Test;
 
+import java.util.Date;
+
+import static java.security.AccessController.getContext;
 import static org.junit.Assert.*;
 
 /**
@@ -14,4 +22,5 @@ public class ExampleUnitTest {
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
     }
+
 }

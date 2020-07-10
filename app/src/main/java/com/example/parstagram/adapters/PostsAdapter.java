@@ -81,7 +81,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             }
             tvUsername.setText(post.getUser().getUsername());
             tvDescription.setText(post.getDescription());
-            tvTime.setText(getRelativeTimeAgo(post));
+            tvTime.setText(getRelativeTimeAgo(post.getCreatedAt()));
         }
 
         //When post clicked, details appear
@@ -108,7 +108,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 tvTime.setVisibility(View.VISIBLE);
                 Log.i(TAG, "again visible");
             }
-
         }
     }
 
@@ -125,26 +124,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     }
 
     //Formatting time passed
-    public String getRelativeTimeAgo(Post post) {
+    public String getRelativeTimeAgo(Date date) {
 
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        Date date = post.getCreatedAt();
         String dateString = dateFormat.format(date);
-
-
-        String twitterFormat = "dd-MM-yyyy";
-        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
-        sf.setLenient(true);
 
         String relativeDate = "";
         try {
-            long dateMillis = sf.parse(dateString).getTime();
+            long dateMillis = dateFormat.parse(dateString).getTime();
             relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
                     System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
         return relativeDate;
     }
 }
